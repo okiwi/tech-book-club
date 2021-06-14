@@ -1,4 +1,5 @@
 module Domain
+
     type WidgetCode = WidgetCode of string
 
     type GizmoCode = GizmoCode of string
@@ -37,8 +38,6 @@ module Domain
         UnvalidatedBillingAddress: UnvalidatedBillingAddress
         UnvalidatedOrderLines: UnvalidatedOrderLine list
     }
-  
-
 
     type ValidatedCustomerInfo = Undefined
     type ValidatedShippingAddress = Undefined
@@ -48,7 +47,7 @@ module Domain
 
     type ValidatedOrderLine = {
         ValidatedProductCode: ValidatedProductCode
-        ValidatedOrderQuantity: ValidatedProductCode
+        ValidatedOrderQuantity: OrderQuantity
     }
 
     type ValidatedOrder = {
@@ -107,3 +106,25 @@ module Domain
     type PriceOrder = GetProductPrice -> ValidatedOrder -> PricedOrder
 
     type SendAcknowledgementToCustomer = PricedOrder -> Unit
+
+
+    let validateOrder checkProductCodeExists checkAddressExists unvalidatedOrder = 
+        let validateTheCustomerName (unvalidatedCustomer:UnvalidatedCustomer) = failwith "Not Implemented"
+
+        let validateOrderLine (unvalidatedOrderLine:UnvalidatedOrderLine) = 
+            {
+                ValidatedProductCode = failwith "Not Implemented"
+                ValidatedOrderQuantity = failwith "Not Implemented"
+            }
+
+        let validatedCustomer = validateTheCustomerName unvalidatedOrder.UnvalidatedCustomer 
+        let validatedShippingAddress = checkAddressExists unvalidatedOrder.UnvalidatedShippingAddress
+        let validatedBillingAddress = checkAddressExists unvalidatedOrder.UnvalidatedBillingAddress
+        let validatedOrderLines = unvalidatedOrder.UnvalidatedOrderLines |> List.map validateOrderLine
+
+        {
+            ValidatedCustomerInfo = validatedCustomer
+            ValidatedShippingAddress = validatedShippingAddress
+            ValidatedBillingAddress = validatedBillingAddress
+            ValidatedOrderLines = validatedOrderLines
+        }
